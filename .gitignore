@@ -4,6 +4,7 @@
 /.env.dev
 env.dev
 .env
+!.env.example
 /config/secrets/prod/prod.decrypt.private.php
 config/secrets/*/*.decrypt.private.php
 /public/bundles/
