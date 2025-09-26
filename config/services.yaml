@@ -1,0 +1,51 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+parameters:
+    TWITCH_CLIENT_ID: "%env(TWITCH_CLIENT_ID)%"
+    TWITCH_ACCESS_TOKEN: "%env(TWITCH_ACCESS_TOKEN)%"
+
+    twitch.categories:
+          TOTK: [512998]
+          TOTK_Switch2: [1981388235]
+          Skyrim: [30028]
+          Skyrim_special_edition: [1050003477]
+          Skyrim_anniversary_edition: [1258270417]
+          Isaac: [32207]
+          Isaac_rebirth: [201557326]
+          Isaac_afterbirth: [436344698]
+          Isaac_gameboy_edition: [906830759]
+          Isaac_repentance: [1414860634]
+          DKB: [1222247252]
+          WaterparkMynthos: [861895254]
+          HK: [490147]
+          Silksong: [511391]
+          H2: [376500771]
+          LPZA: [997367275]
+          HGSS: [23857]
+          LPA: [561013832]
+          SV: [670867987]
+          FRLG: [13332]
+          Megabonk: [98473926]
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+
+    App\:
+        resource: "../src/"
+
+    App\Service\TwitchCollector:
+        arguments:
+            $clientId: "%TWITCH_CLIENT_ID%"
+            $accessToken: "%TWITCH_ACCESS_TOKEN%"
+            $outputDir: "%kernel.project_dir%/data"
+
+    App\Service\StatsRecorder:
+        arguments:
+            $outputDir: '%kernel.project_dir%/data'        
+
+    App\Command\TwitchCollectCommand:
+        arguments:
+            $categories: "%twitch.categories%"
