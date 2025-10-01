@@ -30,28 +30,14 @@ class StreamsRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    //    /**
-    //     * @return Streams[] Returns an array of Streams objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('s')
-    //            ->andWhere('s.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('s.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function findDistinctGames(): array
+    {
+        $qb = $this->createQueryBuilder('s')
+            ->select('DISTINCT s.gameId, s.gameName')
+            ->orderBy('s.gameName', 'ASC');
 
-    //    public function findOneBySomeField($value): ?Streams
-    //    {
-    //        return $this->createQueryBuilder('s')
-    //            ->andWhere('s.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        return $qb->getQuery()->getArrayResult();
+    }
+
+    
 }

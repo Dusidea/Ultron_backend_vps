@@ -25,7 +25,7 @@ class TwitchCollector
         $timestamp = date('Y-m-d H:i:s');
 
         foreach ($gameIds as $gameId) {
-            $url = 'https://api.twitch.tv/helix/streams?game_id=' . $gameId . '&language=fr&first=100';
+            $url = 'https://api.twitch.tv/helix/streams?game_id=' . $gameId . '&language=fr&first=50';
 
             $response = $this->client->request('GET', $url, [
                 'headers' => [

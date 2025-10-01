@@ -34,4 +34,20 @@ class DataController extends AbstractController
 
         return $this->json($data);
     }
+
+    #[Route('/api/games', name: 'api_games')]
+    public function games(StreamsRepository $repo): JsonResponse
+    {
+        $games = $repo->findDistinctGames();
+
+        // On simplifie le format pour le front (optionnel)
+        $data = array_map(fn($g) => [
+            'id' => $g['gameId'],
+            'name' => $g['gameName'],
+        ], $games);
+
+        return $this->json($data);
+    }
+
+ 
 }
