@@ -13,10 +13,24 @@ class DataController extends AbstractController
    #[Route('/api/streams', name: 'api_streams')]
     public function streams(Request $request, StreamsRepository $repo): JsonResponse
     {
+
+        // Secure date conversion
+        try {
+            $from = $request->query->get('from')
+                ? new \DateTimeImmutable($request->query->get('from'))
+                : new \DateTimeImmutable('2025-09-01');
+
+            $to = $request->query->get('to')
+                ? new \DateTimeImmutable($request->query->get('to'))
+                : new \DateTimeImmutable('2025-09-30');
+        } catch (\Exception $e) {
+            // Retourne une erreur claire au frontend si le format est invalide
+            return $this->json(['error' => 'Invalid date format'], 400);
+        }
         //default values if no parameters are mentionned in the request (fallback)
         $gameName = $request->query->get('game', 'Hades II'); 
-        $from     = new \DateTime($request->query->get('from', '2025-09-01'));
-        $to       = new \DateTime($request->query->get('to', '2025-09-30'));
+        // $from     = new \DateTime($request->query->get('from', '2025-09-01'));
+        // $to       = new \DateTime($request->query->get('to', '2025-09-30'));
 
         $streams = $repo->findByGameAndPeriod($gameName, $from, $to);
 
@@ -32,15 +46,22 @@ class DataController extends AbstractController
             'gameName'      => $s->getGameName(),
         ], $streams);
 
-        return $this->json($data);
+         $response = $this->json([
+            'meta' => [
+                'count' => count($data),
+                'sizeMB' => round(strlen(json_encode($data)) / 1024 / 1024, 2),
+            ],
+            'data' => $data
+        ]);
+
+        return $response;
     }
 
     #[Route('/api/games', name: 'api_games')]
     public function games(StreamsRepository $repo): JsonResponse
     {
         $games = $repo->findDistinctGames();
-
-        // On simplifie le format pour le front (optionnel)
+        
         $data = array_map(fn($g) => [
             'id' => $g['gameId'],
             'name' => $g['gameName'],

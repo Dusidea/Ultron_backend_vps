@@ -18,23 +18,35 @@ class StreamsRepository extends ServiceEntityRepository
 
     public function findByGameAndPeriod(string $gameName, \DateTimeInterface $from, \DateTimeInterface $to): array
     {
+        // transform into DateTimeImmutable if necessary, otherwise use like it is
+        $fromImmutable = ($from instanceof \DateTimeImmutable) ? $from : new \DateTimeImmutable($from->format('Y-m-d H:i:s'));
+        $toImmutable   = ($to instanceof \DateTimeImmutable) ? $to : new \DateTimeImmutable($to->format('Y-m-d H:i:s'));
+
+        // Semi-open interval
+        $fromImmutable = $fromImmutable->setTime(0, 0, 0);
+        $toImmutable   = $toImmutable->modify('+1 day')->setTime(0, 0, 0);
+
         return $this->createQueryBuilder('s')
             ->where('s.gameName = :gameName')
-            ->andWhere('s.collectedAt BETWEEN :from AND :to')
+            ->andWhere('s.collectedAt >= :from')
+            ->andWhere('s.collectedAt < :to')
+            ->andWhere('s.rank < 26')
             ->setParameter('gameName', $gameName)
-            ->setParameter('from', $from)
-            ->setParameter('to', $to)
+            ->setParameter('from', $fromImmutable)
+            ->setParameter('to', $toImmutable)
             ->orderBy('s.collectedAt', 'ASC')
-            ->addOrderBy('s.rank', 'ASC') 
+            ->addOrderBy('s.rank', 'ASC')
             ->getQuery()
             ->getResult();
     }
 
-    public function findDistinctGames(): array
+  public function findDistinctGames(): array
     {
         $qb = $this->createQueryBuilder('s')
-            ->select('DISTINCT s.gameId, s.gameName')
-            ->orderBy('s.gameName', 'ASC');
+            ->select('s.gameId AS gameId, MAX(s.gameName) AS gameName')
+            ->where('s.gameId IS NOT NULL')
+            ->groupBy('s.gameId')
+            ->orderBy('gameName', 'ASC');
 
         return $qb->getQuery()->getArrayResult();
     }
