@@ -16,6 +16,7 @@ class StreamsRepository extends ServiceEntityRepository
         parent::__construct($registry, Streams::class);
     }
 
+    #this method retrieves streams within a category bewteen 2 dates
     public function findByGameAndPeriod(string $gameName, \DateTimeInterface $from, \DateTimeInterface $to): array
     {
         // transform into DateTimeImmutable if necessary, otherwise use like it is
@@ -40,7 +41,34 @@ class StreamsRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-  public function findDistinctGames(): array
+    #this method retrieves streams at given timestamp (date+ hour + minute) within a category
+    public function findByGameAndHour(string $gameName, \DateTimeInterface $atTimeStamp): array
+    { 
+        // Début de la minute (secondes à 0)
+        $startOfMinute = (clone $atTimeStamp)->setTime(
+            (int) $atTimeStamp->format('H'),
+            (int) $atTimeStamp->format('i'),
+            0
+        );
+
+        // Fin de la minute (secondes à 59)
+        $endOfMinute = (clone $startOfMinute)->modify('+59 seconds');
+
+        return $this->createQueryBuilder('s')
+            ->where('s.gameName = :gameName')
+            ->andWhere('s.collectedAt BETWEEN :start AND :end')
+            ->andWhere('s.rank < 26')
+            ->setParameter('gameName', $gameName)
+            ->setParameter('start', $startOfMinute)
+            ->setParameter('end', $endOfMinute)
+            ->orderBy('s.collectedAt', 'ASC')
+            ->addOrderBy('s.rank', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    //this method retrieves the list of categories available within the DataBase
+    public function findDistinctGames(): array
     {
         $qb = $this->createQueryBuilder('s')
             ->select('s.gameId AS gameId, MAX(s.gameName) AS gameName')
@@ -50,6 +78,4 @@ class StreamsRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getArrayResult();
     }
-
-    
 }
