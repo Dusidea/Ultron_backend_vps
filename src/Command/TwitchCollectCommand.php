@@ -35,8 +35,8 @@ class TwitchCollectCommand extends Command
         foreach ($this->categories as $categoryName => $gameIds) {
             try {
                 $rows = $this->collector->collect($gameIds);
-                // CSV backup
-                $this->recorder->recordCsv($rows, $categoryName);
+                // CSV backup, deactivated
+                // $this->recorder->recordCsv($rows, $categoryName);
 
                 // DB insert
                 $timestamp = date('Y-m-d H:i:s');

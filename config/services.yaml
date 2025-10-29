@@ -3,7 +3,8 @@
 
 parameters:
     TWITCH_CLIENT_ID: "%env(TWITCH_CLIENT_ID)%"
-    TWITCH_ACCESS_TOKEN: "%env(TWITCH_ACCESS_TOKEN)%"
+    # TWITCH_ACCESS_TOKEN: "%env(TWITCH_ACCESS_TOKEN)%"
+    # twitch access token is now stored in cache
 
     twitch.categories:
           TOTK: [512998]
@@ -39,7 +40,7 @@ services:
     App\Service\TwitchCollector:
         arguments:
             $clientId: "%TWITCH_CLIENT_ID%"
-            $accessToken: "%TWITCH_ACCESS_TOKEN%"
+            $tokenService: '@App\Service\TwitchTokenService'
             $outputDir: "%kernel.project_dir%/data"
 
     App\Service\StatsRecorder:
@@ -49,3 +50,7 @@ services:
     App\Command\TwitchCollectCommand:
         arguments:
             $categories: "%twitch.categories%"
+    App\Service\TwitchTokenService:
+        arguments:
+            $twitchClientId: "%env(TWITCH_CLIENT_ID)%"
+            $twitchClientSecret: "%env(TWITCH_CLIENT_SECRET)%"

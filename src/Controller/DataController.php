@@ -66,10 +66,19 @@ class DataController extends AbstractController
       
         //default values if no parameters are mentionned in the request (fallback)
         $gameName = $request->query->get('game', 'Hades II'); 
-       
-        // paramètre "time" (obligatoire pour cibler une minute précise)
-    $timeParam = $request->query->get('time', (new \DateTime())->format('Y-m-d H:i:s'));
-    $atTimeStamp = new \DateTime($timeParam);
+               $timeParam = $request->query->get('time');
+
+        if ($timeParam) {
+            // datetime-local renvoie un format "YYYY-MM-DDTHH:MM"
+            $atTimeStamp = \DateTime::createFromFormat('Y-m-d\TH:i', $timeParam);
+        } else {
+            // fallback sur maintenant, tronqué à la minute
+            $atTimeStamp = (new \DateTime())->setTime(
+                (int) (new \DateTime())->format('H'),
+                (int) (new \DateTime())->format('i'),
+                0
+            );
+        }
 
         $streams = $repo->findByGameAndHour($gameName, $atTimeStamp);
 

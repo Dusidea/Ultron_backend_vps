@@ -17,7 +17,7 @@ class StatsRecorder
     }
 
     /**
-     * Saves data in CSV files.
+     * Saves data in CSV files if called in TwitchCollectCommand
      *
      * @param array $rows        List of lines to write
      * @param string $category   Category name for both folder and file names
