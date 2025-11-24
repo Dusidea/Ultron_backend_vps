@@ -28,6 +28,16 @@ parameters:
           SV: [670867987]
           FRLG: [13332]
           Megabonk: [98473926]
+          Dispatch: [602959317]
+          Fallout4: [489776]
+          Fallout4_annirversary: [1600849257]
+          Fallout76: [506246]
+          Fallout_new_Vegas: [23453]
+
+# All games above Dispatch (start 2025 09 30)
+# Dispatch added  2025 11 13 (YYYY MM DD) at 15h19
+# Fallout added 2025 11 24
+
 
 services:
     _defaults:

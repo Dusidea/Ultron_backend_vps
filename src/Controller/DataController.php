@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class DataController extends AbstractController
 {   
-    #this route allows finding streams between to dates in a given category
+    #this route allows finding streams between two dates in a given category
    #[Route('/api/streams', name: 'api_streams')]
     public function streams(Request $request, StreamsRepository $repo): JsonResponse
     {
