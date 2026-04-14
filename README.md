@@ -66,3 +66,29 @@ Action => start a program - program : path to php.exe - arguments : path to proj
 
 Notes : with this method, the task will execute only if my own computer is on
 Next step: migrate to a Linux server (VPS) and use Cron instead
+
+### Phase 3 Handling serveral games/categories
+
+1st : extracted business logic in \src\Service\TwitchCollector.php (and kept the inital TwitchCollectCommand.php as entry point)
+It required adapting the config\services.yaml file to handle autowiring issues
+2nd in services.yaml I also added the category list and I call it in the TwitchCollector.php
+Now launching the command writes in separate files (1 per game, gathering alternative categories for the same game). We now create specific folders (1 per game)
+
+Next => installing on a VPS and using Cron as real automation.
+
+// I put all .env files in git ignore but project can't work without a .env (values can be clear) and .env.local (values are sensitive), maybe .env could be committed
+
+### Phase 4 Frontend
+
+#### Serving the files (endpoints)
+
+src > controller > FileController.php
+allows to get a list of files on the route /files (http://[VPS_IP]:8000/files)
+still need to allow file dl
+
+#### Creating a web server (nginx)
+
+-   Install Nginx
+-   configure a virtual host pointing towards public/ in symfony
+-   configure PHP-FPM
+
