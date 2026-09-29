@@ -4,3 +4,5 @@ Pour les recopier localement :
    ssh dusidea@185.126.238.166
 3. ouvrir un second terminal en local et lancer la commande
     scp -r dusidea@185.126.238.166:/home/dusidea/Ultron_twitch/ultron_backend/data C:\Users\gouzi\archiveUltron\
+
+Next steps : retirer du menu déroulant les catégories que j'ai supprimé dans services.yaml (waterpark, etc)
